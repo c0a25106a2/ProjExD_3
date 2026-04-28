@@ -96,7 +96,7 @@ class Beam:
         ビーム画像Surfaceを生成する
         引数 bird：ビームを放つこうかとん（Birdインスタンス）
         """
-        self.vx, self.vy = bird.dire  # 演習4 こうかとんの向き
+        self.vx, self.vy = bird.dire  # 演習4 こうかとんの向き変数
 
         angle = math.degrees(math.atan2(-self.vy, self.vx))
         self.img = pg.transform.rotozoom(pg.image.load("fig/beam.png"), angle, 1.0)  # 演習4 回転速度の計算
@@ -242,7 +242,7 @@ def main():
                 bird.change_img(8, screen)
                 pg.display.update()
                 time.sleep(1)
-                return
+                return  
             
         for i, bomb in enumerate(bombs):
             for j, beam in enumerate(beams):
