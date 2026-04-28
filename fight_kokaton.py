@@ -165,6 +165,35 @@ class Score:  # 演習1 scoreクラス定義
         screen.blit(self.img, self.rct)
 
 
+class Explosion:
+    """
+    爆弾のエフェクトに関するクラス
+    """
+    def __init__(self, obj: Bomb):
+        """
+        爆発エフェクトのSurfaceを生成し、対応するRectを返す
+        引数 obj：爆発した爆弾（Bombインスタンス）
+        """
+        img = pg.image.load("fig/explosion.gif")
+        self.imgs = [
+            img, 
+            pg.transform.flip(img, True, False),
+            pg.transform.flip(img, False, True),
+            pg.transform.flip(img, True, True)
+        ]
+        self.rct = img.get_rect()
+        self.rct.center = obj.rct.center
+        self.life = 20 
+
+    def update(self, screen: pg.Surface):
+        """
+        爆発の表示時間を減らし，反転画像を交互に画面に転送する
+        引数:screen Surface
+        """
+        self.life -= 1
+        screen.blit(self.imgs[self.life // 5 % 4], self.rct)
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -177,6 +206,7 @@ def main():
         bomb = Bomb((255, 0, 0), 10)
         bombs.append(bomb)
     beams = []  # 演習2 ビームのリスト
+    explosions = []  # 演習3 爆発のリスト
     beam = None  # ゲーム初期化時にはビームは存在しない
     clock = pg.time.Clock()
     tmr = 0
@@ -204,6 +234,8 @@ def main():
             for j, beam in enumerate(beams):
                 if beam is not None and bomb is not None:
                     if beam.rct.colliderect(bomb.rct):  # ビームと爆弾の衝突判定
+                        explosions.append(Explosion(bomb))  # 演習3 爆発エフェクトの生成
+
                         beams[j] = None
                         bombs[i] = None
                         bird.change_img(6, screen)  # 喜ぶエフェクト
@@ -214,12 +246,16 @@ def main():
         bombs = [bomb for bomb in bombs if bomb is not None]
         beams = [beam for beam in beams if beam is not None]
 
+        explosions = [ex for ex in explosions if ex.life > 0]  # 演習3 爆発の消去
+
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         for beam in beams:
             beam.update(screen)   
         for bomb in bombs:
             bomb.update(screen)
+        for ex in explosions:
+            ex.update(screen)  # 爆発の更新・描画
         score.update(screen)  # スコアの更新・描画
         pg.display.update()
         tmr += 1
