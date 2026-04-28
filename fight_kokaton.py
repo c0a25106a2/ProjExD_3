@@ -259,7 +259,6 @@ def main():
 
         bombs = [bomb for bomb in bombs if bomb is not None]
         beams = [beam for beam in beams if beam is not None]
-
         explosions = [ex for ex in explosions if ex.life > 0]  # 演習3 爆発の消去
 
         key_lst = pg.key.get_pressed()
